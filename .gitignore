@@ -1,0 +1,27 @@
+# Local configuration with real endpoint values, tokens, and coordinates
+config.local.toml
+
+# Downloaded speech models
+models/
+
+# Runtime state
+state/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Go
+bin/
+
+# Editor
+.DS_Store
