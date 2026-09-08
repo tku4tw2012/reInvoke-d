@@ -1,7 +1,7 @@
 ---
 title: Wake and language support
 description: Chinese wake-word and mixed Mandarin-English posture for reInvoke-d
-ms.date: 2026-09-07
+ms.date: 2026-09-08
 ms.topic: concept
 ---
 
@@ -70,20 +70,22 @@ after a held-out corpus covers:
 ## Routing
 
 The text normalizer uses Unicode character classes. It lowercases Latin text and
-removes punctuation without deleting Chinese characters. The deterministic
-broker may add Chinese exact patterns later, but the Capability Catalog and
-Spines remain language-neutral.
+removes punctuation without deleting Chinese characters.
 
-The Model Gateway's `qwen2.5:0.5b` model can classify Chinese text, but that does
-not make ASR or TTS bilingual. Every enabled language still needs measured
-speech input and output.
+Tier 1 reflexes are declared patterns, so a Chinese phrasing only reaches a
+reflex if a Chinese pattern was declared for it. Anything else escalates to
+OpenClaw, whose model has broader language ability than any pattern table.
+
+Mixed-language requests are therefore expected to escalate, and that is an
+acceptable first behavior rather than a failure. Adding Chinese patterns for the
+most-used reflexes is a later optimization, driven by which requests actually
+recur.
 
 ## Speech output
 
 English uses the measured Piper VITS voice through sherpa-onnx. Chinese and
-mixed-language TTS are not selected yet. A bilingual voice must preserve
-Response Frame placeholders, run faster than real time on the target CPU, and
-pronounce household names acceptably.
+mixed-language TTS are not selected yet. A bilingual voice must run faster than
+real time on the target CPU and pronounce household names acceptably.
 
 Until then, a Chinese wake phrase receives English responses. This is a
 deliberate supported mode, not partial failure.

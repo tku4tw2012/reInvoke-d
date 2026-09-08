@@ -1,7 +1,7 @@
 ---
 title: Endpoint protocol version 1
 description: Binary capture and control contract between reInvoke and reInvoke-d
-ms.date: 2026-09-07
+ms.date: 2026-09-08
 ms.topic: reference
 ---
 
@@ -93,8 +93,11 @@ version may separate control and media.
 
 ## Compatibility
 
-The Python and Go codecs share a byte-exact golden frame in their tests. Both
-reject:
+This version was implemented and validated once, in Python and Go, against a
+byte-exact golden frame. That implementation was removed in the application-layer
+reset; the contract below is the specification to rebuild against.
+
+Both ends must reject:
 
 * Wrong magic or version
 * Unknown message type
@@ -104,6 +107,9 @@ reject:
 * Stale epoch
 * Backward sample position
 * PCM while muted
+
+A shared byte-exact golden frame is a required conformance test for any
+reimplementation, since the two ends are written in different languages.
 
 Protocol changes require a new version. The host may refuse an unsupported
 endpoint rather than guessing compatibility.

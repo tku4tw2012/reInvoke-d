@@ -13,11 +13,12 @@ estimated_reading_time: 11
 ---
 
 > [!IMPORTANT]
-> This is a personal, non-commercial project for one household. This revision
-> resets the application layer: the prior standalone capability library is
-> replaced by a two-tier design built on OpenClaw. The device-side bridge,
-> endpoint protocol, and audio layer carry forward unchanged. Measured numbers
-> live in [`measurements.md`](./measurements.md).
+> This is a personal, non-commercial project for one household. **The repository
+> has been reset to this design and contains no implementation.** A first attempt
+> was written and discarded: it owned household knowledge that OpenClaw already
+> owns, and it put a language model in the path of routine commands. What
+> survives is the design, the recovered device formats, and the measured
+> evidence in [`measurements.md`](./measurements.md).
 
 ## Purpose and scope
 
@@ -311,9 +312,19 @@ These are engineering targets, not product promises.
 
 ## Design completion boundary
 
-The device bridge, endpoint protocol, and audio layer are implemented and carry
-forward. The application layer is being rebuilt against this design. Unresolved
-questions require live capture and interaction testing; more abstract
+Nothing is implemented. This document and the recovered formats beside it are
+the whole of the repository, and are the specification to build against.
+
+Build order follows the constraints rather than the feature list:
+
+1. Audio path — capture transport, ASR, TTS, playback through the existing A2DP
+   route. Without ears and a mouth, neither tier exists.
+2. Tier 1 reflexes — a deliberately small declared table.
+3. Ring pending-state animation — required before Tier 2 is usable.
+4. Tier 2 escalation and the MCP tool surface.
+5. Promotion, wired to OpenClaw's existing proposal queue.
+
+Unresolved questions require live capture and interaction testing; more abstract
 architecture cannot answer them.
 
 Implementation stays stage-gated: a failed measurement changes the smallest

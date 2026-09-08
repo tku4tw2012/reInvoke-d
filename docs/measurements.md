@@ -1,7 +1,7 @@
 ---
 title: Host measurements
 description: Controlled measurements of the reInvoke-d voice stack on the target Mac mini
-ms.date: 2026-09-07
+ms.date: 2026-09-08
 ms.topic: reference
 ---
 
@@ -61,10 +61,9 @@ any closed set. The same utterance handled as three narrow calls returned
 `timer`, `create`, and `12`, each correct and each inside its declared set.
 
 This is direct evidence for the central architectural rule: ask one small
-question with a closed answer set, never one broad question.
-
-Response rendering preserved both `<PASTA>` and `<12>` placeholders exactly
-once, which is the behavior the Response Frame contract depends on.
+question with a closed answer set, never one broad question. It also anticipates
+the tool-calling result below — a small model fabricates freely when the answer
+space is open, and stays honest when it is closed.
 
 ### Model comparison
 
@@ -207,26 +206,48 @@ directions.
 
 Derived from the measurements above for a short command on one endpoint.
 
+**Tier 1 — reflex, no model in the path:**
+
 | Stage | Expected cost |
 |---|---|
 | Streaming recognition after speech ends | about 0.3 s |
-| Deterministic routing with no model call | negligible |
-| Narrow classification and extraction when needed | 0.3 to 1.1 s |
-| Deterministic response template | negligible |
+| Declared pattern match | negligible |
+| Deterministic response text | negligible |
 | Speech synthesis of a short sentence | 0.35 to 0.9 s |
 | Bluetooth transport and buffering | to be measured |
 
-A deterministic command should answer in roughly one second, and a
-classification-routed command in roughly two. The design's four-second target
-at the ninety-fifth percentile has comfortable headroom.
+A reflex should answer in roughly one second, leaving comfortable headroom
+under the four-second p95 gate.
+
+**Tier 2 — escalation to OpenClaw:**
+
+| Stage | Expected cost |
+|---|---|
+| Recognition and spoken acknowledgement | about 1 s, same as Tier 1 |
+| OpenClaw agent turn | 13 s and up, per the tool-calling table |
+| Speech synthesis of the answer | 0.35 to 0.9 s |
+
+The acknowledgement, not the answer, is what must meet the four-second gate.
+The answer arrives when it arrives, and the ring carries the wait.
+
+One consequence needs measuring rather than assuming: an answer arriving tens
+of seconds late may fall outside the MCU's 1.5-second mute holdoff and require
+a fresh authorized unmute cycle.
 
 ## What remains unmeasured
 
 * Microphone capture quality from the Invoke array, including far-field
   behavior, and whether any onboard processing is present in the owned path.
 * Wake-word false accepts across real household audio.
-* Contention when recognition, generation, synthesis, and audio transport run
-  together.
+* Contention when recognition, synthesis, audio transport, and an OpenClaw
+  agent turn run together on four cores — and whether Tier 1 needs scheduling
+  priority to stay instant while Tier 2 is thinking.
+* Whether `qwen2.5:3b` is the right escalation model. It was accurate but slow;
+  OpenClaw is currently configured for `llama3.2:1b`, which was faster and
+  repeatably wrong on tool selection.
+* End-to-end Tier 2 latency including recognition, escalation, and synthesis.
+* Whether a late Tier 2 answer needs a fresh unmute cycle after the 1.5-second
+  MCU mute holdoff.
 * Bluetooth and Wi-Fi coexistence on the device radio.
 * Multiple simultaneous A2DP connections from one host adapter.
 * Sustained thermal behavior on 2011 hardware.

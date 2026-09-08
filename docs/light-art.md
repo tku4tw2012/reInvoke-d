@@ -1,15 +1,21 @@
 ---
 title: Top-ring light art
 description: Creative animation model for the 13-element Invoke top ring
-ms.date: 2026-09-07
+ms.date: 2026-09-08
 ms.topic: concept
 ---
 
 ## Purpose
 
-The top ring can display more than functional status. reInvoke-d treats it as a
-small ambient canvas for movement, rhythm, seasonal scenes, weather, and quiet
-room presence.
+The top ring is both a status surface and a small ambient canvas — movement,
+rhythm, seasonal scenes, weather, and quiet room presence.
+
+It is also **load-bearing, not decorative**. Tier 2 requests escalate to
+OpenClaw and take tens of seconds on the current host. Silence for that long
+reads as a broken device; a visibly working ring reads as thinking. The ring is
+the affordance that makes the deliberation tier tolerable, so a pending-state
+animation is a requirement rather than a flourish. See
+[`design.md`](./design.md).
 
 This is separate from smart-bulb control. Bulbs illuminate a room; light art
 animates the speaker itself.
@@ -56,11 +62,17 @@ No art capability may:
 
 ## Current status
 
-The host can compose, preview, and export valid `.bin` assets. Playback of
-custom assets is not connected yet. It needs a reviewed reInvoke control surface
-for either a bounded art-asset transfer or a curated set packaged into the RAM
-image.
+Nothing is implemented. The frame format above was recovered from the device and
+is the reference for rebuilding.
 
-The implementation does not use arbitrary shell access or place files on the
-live device. That boundary stays with reInvoke and its hardware review.
+Two things must be built, in this order:
+
+1. A **pending-state animation** for Tier 2 escalation. This is the minimum
+   viable ring behavior, because the deliberation tier is unusable without it.
+2. Composition, preview, and export of `.bin` assets for ambient art.
+
+Playback of custom assets additionally needs a reviewed reInvoke control surface
+for either a bounded art-asset transfer or a curated set packaged into the RAM
+image. That boundary stays with reInvoke and its hardware review; no host
+implementation may use arbitrary shell access or place files on the live device.
 
